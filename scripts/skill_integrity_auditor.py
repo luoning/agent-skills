@@ -3,59 +3,7 @@ import sys
 import re
 import yaml
 
-def audit_single_skill(skill_md_path):
-    """
-    Audits a single SKILL.md file for compliance with best practices.
-    """
-    print(f"Auditing Skill file: {skill_md_path}")
-    if not os.path.exists(skill_md_path):
-        print(f"Error: {skill_md_path} does not exist.")
-        return False
 
-    with open(skill_md_path, "r", encoding="utf-8") as f:
-        content = f.read()
-
-    # 1. Frontmatter check
-    is_main_skill = os.path.basename(skill_md_path).lower() == "skill.md"
-    if not is_main_skill:
-        # For sub-skills or non-main markdown documents, frontmatter is optional
-        if not content.startswith("---"):
-            print(f"Skipping frontmatter validation for non-entrypoint file: {os.path.basename(skill_md_path)}")
-            # Perform a basic link target verification instead of failing frontmatter check
-            return check_markdown_links(content, skill_md_path)
-
-    if not content.startswith("---"):
-        print("Error: SKILL.md must start with YAML frontmatter delimiters '---'.")
-        return False
-        
-    parts = content.split("---", 2)
-    if len(parts) < 3:
-        print("Error: Invalid frontmatter formatting. Missing closing '---'.")
-        return False
-
-
-    try:
-        frontmatter = yaml.safe_load(parts[1])
-    except Exception as e:
-        print(f"Error parsing YAML frontmatter: {e}")
-        return False
-
-    # Frontmatter rules
-    name = frontmatter.get("name")
-    description = frontmatter.get("description", "")
-
-    if not name or not re.match(r'^[a-z0-9-]+$', name):
-        print(f"Error: 'name' field ({name}) must use lowercase letters, numbers, and hyphens only.")
-        return False
-
-    if not description.strip().startswith("Use when"):
-        print("Error: 'description' must start with standard trigger keyword 'Use when...'.")
-        return False
-
-    # Check for process summary violation in description
-    if any(keyword in description.lower() for keyword in ["then do", "steps:", "first", "next", "finally"]):
-        print("Warning: 'description' should describe triggering symptoms, NOT summarize the workflow steps.")
-        # We don't fail immediately, but alert developer
 
 def check_markdown_links(content, skill_md_path):
     links = re.findall(r'\[([^\]]*)\]\((file:///|(?!\w+://))([^)]*)\)', content)
@@ -104,6 +52,11 @@ def audit_single_skill(skill_md_path):
     if not is_main_skill:
         if not content.startswith("---"):
             print(f"Skipping frontmatter validation for non-entrypoint file: {os.path.basename(skill_md_path)}")
+            # Check for hardcoded absolute paths / drive letters (e.g. F:/, E:/, C:/, D:/ or file:///C:, file:///D:, file:///E:, file:///F:)
+            hardcoded_drive_paths = re.findall(r'(?i)\b(?:[c-z]:[\\/]|file:\/\/\/[c-z]:)', content)
+            if hardcoded_drive_paths:
+                print(f"Error: Hardcoded absolute drive paths found in {os.path.basename(skill_md_path)}: {hardcoded_drive_paths}")
+                return False
             return check_markdown_links(content, skill_md_path)
 
     if not content.startswith("---"):
@@ -137,7 +90,13 @@ def audit_single_skill(skill_md_path):
     if any(keyword in description.lower() for keyword in ["then do", "steps:", "first", "next", "finally"]):
         print("Warning: 'description' should describe triggering symptoms, NOT summarize the workflow steps.")
 
-    # 2. Check for markdown link targets availability
+    # 2. Check for hardcoded absolute paths / drive letters (e.g. F:/, E:/, C:/, D:/ or file:///C:, file:///D:, file:///E:, file:///F:)
+    hardcoded_drive_paths = re.findall(r'(?i)\b(?:[c-z]:[\\/]|file:\/\/\/[c-z]:)', content)
+    if hardcoded_drive_paths:
+        print(f"Error: Hardcoded absolute drive paths found in {os.path.basename(skill_md_path)}: {hardcoded_drive_paths}")
+        return False
+
+    # 3. Check for markdown link targets availability
     return check_markdown_links(content, skill_md_path)
 
 

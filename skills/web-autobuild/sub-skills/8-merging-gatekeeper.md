@@ -10,7 +10,7 @@ The merging unit must process the integration via a **Three-Stage Gatekeeper**:
 
 ```text
 Subagent Branch (PR)
-  ├── [Stage 1] File Boundary Check (Block if E:/Skills/docs or css/layout.css mutated without permission)
+  ├── [Stage 1] File Boundary Check (Block if docs/ or css/layout.css mutated without permission)
   ├── [Stage 2] Run pipeline_validator.py (Verify 100% color isolation and GEO anchors)
   └── [Stage 3] State Lock Merge Protocol (Safely merge branch artifact states into .pipeline_state.json)
 ```

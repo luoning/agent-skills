@@ -71,66 +71,41 @@ web-autobuild/
 
 ## 5. Whitepaper Reference
 The pipeline is designed to conform to the high-extensibility CSS separation standard. Reference the global design whitepaper for detailed guidelines:
-*   Absolute URI: [webcss_design_whitepaper.md](file:///E:/Skills/docs/webcss_design_whitepaper.md)
+*   Relative URI: [webcss_design_whitepaper.md](../../docs/webcss_design_whitepaper.md)
 
 ---
 
 ## 6. Physical State Lock Protocol (`.pipeline_state.json`)
-
-To prevent reasoning overload and skip-phase errors, a state file named `.pipeline_state.json` **MUST** be initialized in the root of the target workspace.
-
-### Lock Protocol Rules:
-1.  **Initialization**: At the start of a project, if `.pipeline_state.json` does not exist, you must create it in the workspace root, initializing all phases as `pending` and `current_phase` to `1`.
-2.  **Phase Verification**: Before performing any action, read `.pipeline_state.json`. You are only allowed to work on the phase indicated by `current_phase`.
-3.  **Phase Transition (DoD Check)**: To advance to phase $N+1$, you must satisfy the Definition of Done (DoD) of phase $N$, run its verification harness, write the phase output file paths to `phases[N].artifacts`, set `phases[N].status` to `completed`, and set `current_phase` to $N+1$.
-4.  **No Parallelism**: Only one phase can be updated at a time.
-
----
-
-## 7. Pipeline Phase Router
-
-
-```mermaid
-graph TD
-    Start[Init Workspace] -->|Write Lock| P1[Phase 1: Content Extraction]
-    P1 -->|Pass DoD & Lock Update| P2[Phase 2: Narrative Alignment]
-    P2 -->|Pass DoD & Lock Update| P3[Phase 3: Data Structuring]
-    P3 -->|Pass DoD & Lock Update| P4[Phase 4: GEO Anchors]
-    P4 -->|Pass DoD & Lock Update| P5[Phase 5: Skeleton HTML]
-    P5 -->|Pass DoD & Lock Update| P6[Phase 6: Web Components]
-    P6 -->|Pass DoD & Lock Update| P7[Phase 7: Style Separation]
-    P7 -->|Pass Final Audit| Finished[Delivery & Build Ready]
-```
-
-### [Phase 1: Content Extraction](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/1-content-extraction.md)
+... [remaining content truncated for mapping] ...
+### [Phase 1: Content Extraction](sub-skills/1-content-extraction.md)
 *   **Trigger**: Ready to begin webpage creation. Extract parameters, specifications, locations, and copy points.
 *   **Action**: Follow `1-content-extraction.md`.
 
-### [Phase 2: Narrative Alignment](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/2-narrative-alignment.md)
+### [Phase 2: Narrative Alignment](sub-skills/2-narrative-alignment.md)
 *   **Trigger**: Content extracted. Convert specifications to customer value maps.
 *   **Action**: Follow `2-narrative-alignment.md`.
 
-### [Phase 3: Data Structuring](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/3-data-structuring.md)
+### [Phase 3: Data Structuring](sub-skills/3-data-structuring.md)
 *   **Trigger**: Narrative copy drafted. Generate Schema.org JSON-LD structured data.
 *   **Action**: Follow `3-data-structuring.md`.
 
-### [Phase 4: GEO Anchors](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/4-geo-anchors.md)
+### [Phase 4: GEO Anchors](sub-skills/4-geo-anchors.md)
 *   **Trigger**: Data structure ready. Inject unique LLM-scannable ID anchors.
 *   **Action**: Follow `4-geo-anchors.md`.
 
-### [Phase 5: Skeleton HTML](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/5-skeleton-html.md)
+### [Phase 5: Skeleton HTML](sub-skills/5-skeleton-html.md)
 *   **Trigger**: ID mapping finalized. Build semantic HTML grid and block templates.
 *   **Action**: Follow `5-skeleton-html.md`.
 
-### [Phase 6: Web Components](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/6-web-components.md)
+### [Phase 6: Web Components](sub-skills/6-web-components.md)
 *   **Trigger**: Semantic HTML built. Inject custom elements and hydrate templates.
 *   **Action**: Follow `6-web-components.md`.
 
-### [Phase 7: Style Separation](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/7-style-separation.md)
+### [Phase 7: Style Separation](sub-skills/7-style-separation.md)
 *   **Trigger**: HTML fully hydrated. Apply styles into `variables.css`, `layout.css`, and `theme.css`. Run the test harness.
 *   **Action**: Follow `7-style-separation.md`.
 
-### [Phase 8: Merging Gatekeeper](file:///F:/%E7%9F%B3%E5%A4%B4%E5%92%8C%E7%A0%81/github/agent-skills/skills/web-autobuild/sub-skills/8-merging-gatekeeper.md)
+### [Phase 8: Merging Gatekeeper](sub-skills/8-merging-gatekeeper.md)
 *   **Trigger**: Subagent request PR merge. Run static checker and merge state locks.
 *   **Action**: Follow `8-merging-gatekeeper.md`.
 

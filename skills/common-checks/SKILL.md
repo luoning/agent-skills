@@ -35,6 +35,6 @@ Every skill file must pass the following checkgates:
 ## 3. DoD Verification Script
 To verify the integrity of the repository, execute:
 ```bash
-python scripts/skill_integrity_auditor.py F:/石头和码/github/agent-skills
+python scripts/skill_integrity_auditor.py .
 ```
-*   **DoD**: The console prints `All Skills in Repository are fully compliant (AUDIT PASSED)!`.
+*   **DoD**: The console prints `All Skills in Repository are fully compliant (AUDIT PASSED)!.`.
