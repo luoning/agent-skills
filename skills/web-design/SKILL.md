@@ -8,6 +8,12 @@ description: Use when designing web interfaces, establishing layout aesthetics, 
 ## Overview
 This skill provides the visual and aesthetic source of truth (design system) for coding agents. It ensures that generated webpages do not look generic, but feel premium, modern, and have high visual hierarchy, aligning with high-quality B2B showcase standards.
 
+### 🔌 Execution Paths (Modular Workflows)
+*   **Direct Build Mode**: This design skill is optional. The agent can skip it and run `web-autobuild` directly using standard fallback layouts.
+*   **Premium Design-Build Mode**: This skill runs **first**. It defines and logs the design tokens and layout aesthetics. The agent then invokes `web-autobuild` which inherits these variables to generate a highly customized visual frontend.
+
+---
+
 ## 1. Early Alignment (Phase 1 Input)
 Before styling begins, the visual theme parameters (brand identity, primary color tone, spacing expectations) must be captured during **Phase 1: Content Extraction**. Ensure that:
 *   Brand identity is mapped directly to CSS custom property tokens.

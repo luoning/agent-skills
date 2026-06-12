@@ -10,6 +10,11 @@ This is the master coordinator for the **7-Step Web Automatic Creation & Evoluti
 
 All pipeline processes are strictly tracked using a physical state lock file `.pipeline_state.json` to ensure stage-by-stage execution and prevent skipping.
 
+### 🔌 Execution Paths (Modular Workflows)
+Depending on project requirements, you can invoke these skills in two ways:
+1. **Direct Build Mode**: If the user wants a standard functional page layout directly, execute **`web-autobuild`** directly.
+2. **Premium Design-Build Mode**: If the user requires a highly styled, premium visual brand system, execute **`web-design`** first to configure design tokens, colors, and layout aesthetics, and then proceed with **`web-autobuild`**.
+
 ---
 
 ## 1. Multi-Agent & Tool Compatibility
