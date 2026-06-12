@@ -33,7 +33,12 @@ Every skill file must pass the following checkgates:
 
 ---
 
-## 3. DoD Verification Script
+## 3. Modular Sub-skills
+*   **[Skill Generator & Registrar](sub-skills/skill-generator.md)**: Guidelines for learning boilerplate, creating new skills dynamically, and auto-registering them.
+
+---
+
+## 4. DoD Verification Script
 To verify the integrity of the repository, execute:
 ```bash
 python scripts/skill_integrity_auditor.py .
