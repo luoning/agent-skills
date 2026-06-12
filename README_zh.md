@@ -80,7 +80,7 @@ agent-skills/
 在你的**目标项目根目录**下运行以下命令，即可全自动拉取规范、部署验证器并**编译出适合当前项目目录的 Cursor MDC 规则**：
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/username/agent-skills/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/luoning/agent-skills/main/scripts/install.sh | bash
 ```
 
 ### 选项 2：手动编译导出 MDC 规则

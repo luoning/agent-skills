@@ -81,7 +81,7 @@ agent-skills/
 Run the following command in the **root of your target project** to fetch the skills, deploy the checking scripts, and **automatically compile local Cursor MDC rules**:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/username/agent-skills/main/scripts/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/luoning/agent-skills/main/scripts/install.sh | bash
 ```
 
 ### Option 2: Compile MDC Rules Locally
