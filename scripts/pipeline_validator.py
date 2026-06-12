@@ -270,15 +270,21 @@ def validate_pipeline(workspace_dir):
                     print(f"DoD Verification Failed: {os.path.basename(hf)} contains non-semantic sequential IDs: {invalid_ids}")
                     sys.exit(1)
 
-    # ------------------------------------------------------------------------
-    # Phase 5 & 6 Checks: HTML Grid Classes & Component Shadow/Inline Styles
-    # ------------------------------------------------------------------------
     if current_phase >= 5:
         # Check layout CSS file exists
         layout_path = os.path.join(src_dir, "css/layout.css")
         if current_phase == 5 and not os.path.exists(layout_path):
-            print("DoD Verification Failed: layout.css must be initialized in Phase 5.")
-            sys.exit(1)
+            fail_with_suggestions(
+                workspace_dir,
+                "DoD Verification Failed: layout.css must be initialized in Phase 5.",
+                "missing_layout_css",
+                [
+                    {
+                        "action": "create_layout_css",
+                        "instruction": f"Create a base 'css/layout.css' file inside the source directory: '{src_dir}'."
+                    }
+                ]
+            )
 
     if current_phase >= 6:
         # Check Web Components modules
@@ -290,8 +296,18 @@ def validate_pipeline(workspace_dir):
                     js_content = f.read()
                 # Check for inline HTML styles pollution inside components JS
                 if re.search(r'style=["\'][^"\']*color|style=["\'][^"\']*display|style=["\'][^"\']*padding', js_content, re.IGNORECASE):
-                    print(f"DoD Verification Failed: Web Component {os.path.basename(jsc)} contains forbidden inline CSS style declarations.")
-                    sys.exit(1)
+                    err_msg = f"DoD Verification Failed: Web Component {os.path.basename(jsc)} contains forbidden inline CSS style declarations."
+                    fail_with_suggestions(
+                        workspace_dir,
+                        err_msg,
+                        "inline_style_pollution",
+                        [
+                            {
+                                "action": "extract_inline_style",
+                                "instruction": f"Remove inline styles from Web Component '{os.path.basename(jsc)}' and define classes in layout.css or theme.css instead."
+                            }
+                        ]
+                    )
 
     # ------------------------------------------------------------------------
     # Phase 7 Check: Style Separation
@@ -324,12 +340,18 @@ def validate_pipeline(workspace_dir):
                     keyword_colors.extend(matches)
         
         if len(hex_colors) > 0 or len(rgb_colors) > 0 or len(rgba_colors) > 0 or len(hsl_colors) > 0 or len(hsla_colors) > 0 or len(keyword_colors) > 0:
-            print("CSS Verification Failed: layout.css contains raw color declarations!")
-            print(f"Hex: {hex_colors}")
-            print(f"RGB/RGBA: {rgb_colors} {rgba_colors}")
-            print(f"HSL/HSLA: {hsl_colors} {hsla_colors}")
-            print(f"Keywords: {keyword_colors}")
-            sys.exit(1)
+            err_msg = f"CSS Verification Failed: {os.path.basename(layout_path)} contains raw color declarations!"
+            fail_with_suggestions(
+                workspace_dir,
+                err_msg,
+                "css_variable_leak",
+                [
+                    {
+                        "action": "extract_colors",
+                        "instruction": f"Move the raw colors {hex_colors + rgb_colors + rgba_colors + hsl_colors + hsla_colors + keyword_colors} in 'layout.css' into semantic variables inside 'variables.css' and reference them via var()."
+                    }
+                ]
+            )
             
     print("Static verification completed successfully!")
 
