@@ -1,0 +1,84 @@
+---
+description: Use when designing web interfaces, establishing layout aesthetics, styling interactive cards, or configuring global CSS theme variables.
+globs: ['SofreightWorkspace/oversea/track/**/*.css', 'SofreightWorkspace/oversea/track/css/variables.css']
+alwaysApply: false
+---
+
+# Web Design System & Visual Philosophy
+
+## Overview
+This skill provides the visual and aesthetic source of truth (design system) for coding agents. It ensures that generated webpages do not look generic, but feel premium, modern, and have high visual hierarchy, aligning with high-quality B2B showcase standards.
+
+### 🔌 Execution Paths (Modular Workflows)
+*   **Direct Build Mode**: This design skill is optional. The agent can skip it and run `web-autobuild` directly using standard fallback layouts.
+*   **Premium Design-Build Mode**: This skill runs **first**. It defines and logs the design tokens and layout aesthetics. The agent then invokes `web-autobuild` which inherits these variables to generate a highly customized visual frontend.
+
+---
+
+## 1. Early Alignment (Phase 1 Input)
+Before styling begins, the visual theme parameters (brand identity, primary color tone, spacing expectations) must be captured during **Phase 1: Content Extraction**. Ensure that:
+*   Brand identity is mapped directly to CSS custom property tokens.
+*   Theme requirements (e.g. dark mode Slate-Blue versus bright theme) are decided upfront in `.extracted_facts.json`.
+
+---
+
+## 2. Visual Aesthetics & Token Design
+
+When building CSS themes, you must translate these philosophies into variables inside `variables.css`.
+
+### Color Palette (Technical & Premium Slate Blue)
+*   **Deep Canvas Background (`--canvas-bg`)**: A soft slate dark blue, e.g. `#0f172a` (Slate 900) or gradients to `#1e293b`. Never use pure black `#000000`.
+*   **Brand Highlight (`--brand-color`)**: A bright electric sky blue, e.g. `#0ea5e9` for borders and dynamic glows.
+*   **Action & Conversion (`--action-color`)**: A vibrant emerald green, e.g. `#10b981`.
+*   **Subtle Borders (`--border-soft`)**: Low-opacity white line, e.g. `rgba(255, 255, 255, 0.08)`.
+
+### Spacing & Rhythm Scale
+*   Use a strict 4px grid system:
+    ```css
+    --space-xs: 4px;
+    --space-sm: 8px;
+    --space-md: 16px;
+    --space-lg: 24px;
+    --space-xl: 32px;
+    --space-2xl: 64px;
+    ```
+*   Keep layouts breathing with wide vertical padding (`padding: var(--space-2xl) 0`) for section blocks.
+
+### Typography
+*   **Headers**: Bold, high-contrast, slightly condensed letter-spacing (e.g. `letter-spacing: -0.025em`) to feel modern.
+*   **Tables & Numbers**: Always use tabular numbers class (`font-variant-numeric: tabular-nums` or `tnum`) for pricing tables to line up columns.
+
+---
+
+## 2. Interactive Components Rules
+
+### The Glassmorphism Card (Industrial Pedestal)
+All visual container cards must look like floating glass containers:
+```css
+.pedestal-card {
+  background: rgba(30, 41, 59, 0.5); /* Semi-transparent Slate 800 */
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pedestal-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--brand-color);
+  box-shadow: 0 10px 40px rgba(14, 165, 233, 0.15); /* Brand cyan glow */
+}
+```
+
+### Depth & Multi-Layer Shadows
+Never use flat black shadow rules. Tint shadows with background hues:
+*   **Good**: `box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.5);`
+*   **Bad**: `box-shadow: 0 12px 24px #000;`
+
+---
+
+## 3. Definition of Done (DoD)
+*   [ ] CSS variables file (`variables.css`) contains the slate/sky-blue design system palette.
+*   [ ] Main title elements utilize custom condensed letter-spacing.
+*   [ ] Cards implement custom transition cubic-bezier states rather than default ease curves.

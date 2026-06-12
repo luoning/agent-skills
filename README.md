@@ -15,7 +15,9 @@ agent-skills/
 ├── README.md                      <-- 仓库总览与说明文档
 ├── config.json                    <-- 技能库配置文件
 ├── scripts/
-│   └── pipeline_validator.py      <-- 通用物理状态锁与代码隔离静态验证器
+│   ├── pipeline_validator.py      <-- 通用物理状态锁与代码隔离静态验证器
+│   ├── skill_integrity_auditor.py <-- 元完备性校验脚本
+│   └── generate_mdc.py            <-- 一键生成 Cursor MDC 规则脚手架
 └── skills/
     ├── web-autobuild/
     │   ├── SKILL.md               <-- [主控] 7阶段 Web 自动化构建流水线
@@ -46,8 +48,12 @@ agent-skills/
 
 ## 🚀 如何在项目中使用
 
-### 1. 挂载到 Cursor
-将 `skills/` 目录拷贝到你项目的 `.cursor/rules/` 目录下，Cursor 能够自动读取并应用这些规则限制。
+### 1. 自动编译生成 Cursor MDC 规则 (推荐)
+本仓库提供了一键转换脚本，可将系统技能库自动转换为符合 Cursor MDC 规范的自动触发规则：
+```bash
+python scripts/generate_mdc.py
+```
+这将在项目根目录下生成 `.cursor/rules/` 目录以及对应的 `*.mdc` 文件（自动绑定对应的 glob 文件匹配条件），Cursor 即可在修改相关文件时智能自动加载。
 
 ### 2. 挂载到 Claude Code
 在你的项目根目录下，将本仓库的 `skills/` 目录软链接到 `.claude/skills/` 即可按需加载：

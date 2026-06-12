@@ -123,6 +123,20 @@ def audit_repository(repo_path):
             print(f"Error: Hardcoded absolute drive paths found in README.md: {hardcoded_drive_paths}")
             sys.exit(1)
 
+    # Audit generated MDC files if they exist in .cursor/rules
+    mdc_dir = os.path.join(repo_path, ".cursor", "rules")
+    if os.path.exists(mdc_dir):
+        for file in os.listdir(mdc_dir):
+            if file.endswith(".mdc"):
+                mdc_path = os.path.join(mdc_dir, file)
+                print(f"Auditing generated Cursor Rule: {mdc_path}")
+                with open(mdc_path, "r", encoding="utf-8") as f:
+                    mdc_content = f.read()
+                hardcoded_drive_paths = re.findall(r'(?i)\b(?:[c-z]:[\\/]|file:\/\/\/[c-z]:)', mdc_content)
+                if hardcoded_drive_paths:
+                    print(f"Error: Hardcoded absolute drive paths found in Cursor Rule {file}: {hardcoded_drive_paths}")
+                    sys.exit(1)
+
     skills_dir = os.path.join(repo_path, "skills")
     if not os.path.exists(skills_dir):
         print(f"Error: skills folder not found under {repo_path}")
