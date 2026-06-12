@@ -1,0 +1,13 @@
+{
+  "name": "custom-agent-skills",
+  "version": "1.0.0",
+  "description": "Production-grade engineering skills for AI coding agents.",
+  "engines": {
+    "gemini": ">=2.0",
+    "claude": ">=3.5"
+  },
+  "modules": [
+    "skills/web-autobuild",
+    "skills/common-checks"
+  ]
+}
