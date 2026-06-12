@@ -8,8 +8,34 @@
   },
   "modules": [
     "skills/web-autobuild",
-    "skills/common-checks",
     "skills/web-design",
-    "skills/opinion-driven-construction"
-  ]
+    "skills/architecture-piercing",
+    "skills/skill-governance"
+  ],
+  "routing_rules": {
+    "workflow-contract": {
+      "path": "skills/skill-governance/sub-skills/workflow-contract.md",
+      "dependencies": []
+    },
+    "url-extractor": {
+      "path": "skills/skill-governance/sub-skills/url-extractor.md",
+      "dependencies": ["workflow-contract"]
+    },
+    "static-auditor": {
+      "path": "skills/skill-governance/sub-skills/static-auditor.md",
+      "dependencies": ["workflow-contract"]
+    },
+    "scenario-tester": {
+      "path": "skills/skill-governance/sub-skills/scenario-tester.md",
+      "dependencies": ["static-auditor"]
+    },
+    "web-design": {
+      "path": "skills/web-design/SKILL.md",
+      "dependencies": ["workflow-contract"]
+    },
+    "web-autobuild": {
+      "path": "skills/web-autobuild/SKILL.md",
+      "dependencies": ["web-design", "workflow-contract"]
+    }
+  }
 }

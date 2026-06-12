@@ -1,0 +1,45 @@
+---
+description: "Active context rule loaded dynamically. Currently focused on stage: url-extractor."
+globs: "*"
+---
+
+# ACTIVE WORKFLOW CONTEXT: URL-EXTRACTOR
+
+> [!NOTE]
+> This rule was compiled dynamically by the context swapper.
+> Only the rules for the current active development phase are loaded below.
+
+
+---
+
+## [WORKFLOW-CONTRACT MODULE]
+
+# Sub-skill: Workflow Contract (Ideation Sandbox)
+
+## Overview
+Governs the collaborative pipeline between the agent and the user, isolating unapproved brainstorms.
+
+## 1. Rules
+- **Sparks (畅想)**: Keep raw brainstorming strictly in temporary scratch directories.
+- **Opinions (观点)**: Evolving concepts requiring reuse are mapped locally.
+- **Solutions (方案)**: Production-grade skills/code must be approved before save commands.
+- **Isolation**: No files may be staged or committed inside the active workspace until the user explicitly issues "save".
+
+
+---
+
+## [URL-EXTRACTOR MODULE]
+
+# Sub-skill: URL Extractor (POE Value Miner)
+
+## Overview
+Retrieves external web content, deduces sharing intent, and processes data structures without sycophancy or buzzwords.
+
+## 1. Rules
+- **Intent Deduction**: Guess the user's intent by mapping the content to active workspace projects.
+- **POE Triad Mapping**:
+  - **People (人)**: Actors and user frictions.
+  - **Objects (物)**: System components, layout parameters, and assets.
+  - **Events (事)**: Transitions, loops, and critical transaction flows.
+- **Tone**: Speak in plain-spoken Chinese. Reject marketing terms ("empower", "closed-loop").
+

@@ -62,10 +62,14 @@ agent-skills/
     │       └── 10-vibecoding-defense.md <-- Phase 10: Vibe Coding facts lock and decision gateway
     ├── web-design/
     │   └── SKILL.md               <-- [Aesthetics] B2B visual design system and contrast token schema
-    ├── common-checks/
-    │   ├── SKILL.md               <-- [Master] Meta-skill auditor & broken links blocker
+    ├── skill-governance/
+    │   ├── SKILL.md               <-- [Router] Central Central pipeline orchestrator & dynamic sub-skill router
     │   └── sub-skills/
-    │       └── skill-generator.md <-- Automatic skill generation, registration, and auditing spec
+    │       ├── workflow-contract.md <-- Safe temporary sandbox and ideation isolation specs
+    │       ├── url-extractor.md     <-- Deduces intent and extracts website value using POE framework
+    │       ├── static-auditor.md    <-- Formats audit schemas and blocks local path leaks
+    │       ├── scenario-tester.md   <-- Enforces BaseScenarioTest 4-stage lifecycle assertions
+    │       └── skill-generator.md   <-- Automatic skill generation and registration rules
     └── boilerplate-skill.md       <-- Standardized general skill boilerplate (derivation baseline)
 ```
 
