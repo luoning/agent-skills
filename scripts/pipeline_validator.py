@@ -114,22 +114,32 @@ def validate_pipeline(workspace_dir):
                         print(f"DoD Verification Failed: Locked business fact '{fact}' is missing in generated webpage {os.path.basename(hf)}.")
                         sys.exit(1)
                 
-                # Reverse Anti-Hallucination check: Look for money/pricing format e.g. $850 USD or $1,450
-                price_patterns = [r'\$\s*\d+[\d,]*\s*(?:USD|EUR|CAD|GBP)?', r'\d+[\d,]*\s*(?:USD|EUR|CAD|GBP)\b']
-                for pattern in price_patterns:
-                    found_prices = re.findall(pattern, html_content, re.IGNORECASE)
-                    for fp in found_prices:
-                        # Normalize found price to match facts
-                        clean_fp = re.sub(r'[\$,\s]', '', fp).lower()
-                        # See if this number/price is anywhere in the flat facts
-                        matched = False
-                        for fact in flat_facts:
-                            clean_fact = re.sub(r'[\$,\s]', '', fact).lower()
-                            if clean_fp in clean_fact or clean_fact in clean_fp:
-                                matched = True
-                                break
-                        if not matched:
-                            print(f"DoD Verification Failed: Potential pricing hallucination detected in {os.path.basename(hf)}: '{fp}'. This price is not locked in .extracted_facts.json!")
+                # Reverse Anti-Hallucination check: Detect arbitrary numerical values/specifications in HTML
+                # (e.g. 1500, $250, 99.9%, 40HQ) and ensure they are backed by the facts list.
+                # Exclude common visual/HTML attribute values (like 100%, 1px, 2026 for copyright) to prevent false positives.
+                num_pattern = r'\b(?:\$|￥|€)?\d+(?:\.\d+)?(?:%|px|vh|vw|s|ms|deg)?\b'
+                found_numbers = re.findall(num_pattern, html_content)
+                
+                # Extract numbers from flat facts for fast comparison
+                flat_fact_numbers = set()
+                for fact in flat_facts:
+                    nums = re.findall(r'\d+(?:\.\d+)?', fact)
+                    flat_fact_numbers.update(nums)
+                
+                # Common web layout and system numerical values to ignore
+                system_ignore_list = {'100', '0', '1', '2', '3', '4', '8', '12', '24', '2026', '2025', '365', '16', '32', '64'}
+                
+                for num_str in found_numbers:
+                    # Strip symbols to get the raw numeric component
+                    raw_num = re.sub(r'[^\d.]', '', num_str)
+                    if not raw_num or raw_num in system_ignore_list:
+                        continue
+                    
+                    # Verify if this numerical fact exists in our locked facts
+                    if raw_num not in flat_fact_numbers:
+                        # Allow standard CSS unit styles like 1px, 100% but block potential business specification hallucinations
+                        if not any(unit in num_str for unit in ['px', 'vh', 'vw', 'ms', 'deg']):
+                            print(f"DoD Verification Failed: Unregistered business numerical fact '{num_str}' detected in {os.path.basename(hf)}. This value is not declared in .extracted_facts.json!")
                             sys.exit(1)
             
             # Phase 3: Check Schema JSON-LD exists in head
