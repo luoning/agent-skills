@@ -8,9 +8,14 @@ description: Use when designing web interfaces, establishing layout aesthetics, 
 ## Overview
 This skill provides the visual and aesthetic source of truth (design system) for coding agents. It ensures that generated webpages do not look generic, but feel premium, modern, and have high visual hierarchy, aligning with high-quality B2B showcase standards.
 
+## 1. Early Alignment (Phase 1 Input)
+Before styling begins, the visual theme parameters (brand identity, primary color tone, spacing expectations) must be captured during **Phase 1: Content Extraction**. Ensure that:
+*   Brand identity is mapped directly to CSS custom property tokens.
+*   Theme requirements (e.g. dark mode Slate-Blue versus bright theme) are decided upfront in `.extracted_facts.json`.
+
 ---
 
-## 1. Visual Aesthetics & Token Design
+## 2. Visual Aesthetics & Token Design
 
 When building CSS themes, you must translate these philosophies into variables inside `variables.css`.
 
