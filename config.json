@@ -9,6 +9,7 @@
   "modules": [
     "skills/web-autobuild",
     "skills/common-checks",
-    "skills/web-design"
+    "skills/web-design",
+    "skills/opinion-driven-construction"
   ]
 }
