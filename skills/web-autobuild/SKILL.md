@@ -69,7 +69,8 @@ web-autobuild/
     ├── 6-web-components.md           <-- Phase 6: Component imports & custom elements hydration
     ├── 7-style-separation.md         <-- Phase 7: Three-tier CSS style separation & verification
     ├── 8-merging-gatekeeper.md       <-- Phase 8: Merging gatekeeper & CI/CD sandbox integration
-    └── 9-runtime-debugging.md        <-- Phase 9: Runtime debugging & self-healing protocol
+    ├── 9-runtime-debugging.md        <-- Phase 9: Runtime debugging & self-healing protocol
+    └── 10-vibecoding-defense.md      <-- Phase 10: Vibe Coding facts lock and decision gateway guard
 ```
 
 
@@ -118,5 +119,9 @@ The pipeline is designed to conform to the high-extensibility CSS separation sta
 ### [Phase 9: Runtime Debugging & Self-Healing](sub-skills/9-runtime-debugging.md)
 *   **Trigger**: Web Component execution failure, DOM mounting issue, or script crash.
 *   **Action**: Follow `9-runtime-debugging.md`.
+
+### [Phase 10: Vibe Coding Engineering Defense](sub-skills/10-vibecoding-defense.md)
+*   **Trigger**: Local builds or code audits. Block unapproved decisions and fact hallucinations.
+*   **Action**: Follow `10-vibecoding-defense.md`.
 
 

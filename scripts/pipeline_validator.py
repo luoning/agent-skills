@@ -37,6 +37,20 @@ def validate_pipeline(workspace_dir):
                 print("DoD Verification Failed: .extracted_facts.json contains invalid JSON syntax.")
                 sys.exit(1)
 
+        # Check for Decision Pending approved status
+        pending_file = os.path.join(workspace_dir, ".decision_pending.json")
+        if os.path.exists(pending_file):
+            try:
+                with open(pending_file, "r", encoding="utf-8") as f:
+                    decisions = json.load(f)
+                unapproved = [d for d in decisions if not d.get("human_approved", False)]
+                if unapproved:
+                    print(f"DoD Verification Failed: There are unapproved AI recommendations in .decision_pending.json: {[u.get('proposal_id') for u in unapproved]}")
+                    sys.exit(1)
+            except json.JSONDecodeError:
+                print("DoD Verification Failed: .decision_pending.json contains invalid JSON syntax.")
+                sys.exit(1)
+
     # ------------------------------------------------------------------------
     # Phase 2 Check: Narrative Copy
     # ------------------------------------------------------------------------
@@ -65,12 +79,58 @@ def validate_pipeline(workspace_dir):
             track_dir = os.path.join(workspace_dir, "SofreightWorkspace/oversea/track")
             if os.path.exists(track_dir):
                 html_files = [os.path.join(track_dir, f) for f in os.listdir(track_dir) if f.endswith(".html")]
-        else:
-            html_files = [os.path.join(workspace_dir, f) for f in html_files]
+        # Verify that all facts locked in .extracted_facts.json are physically present in HTML content to block hallucinations
+        facts_file = os.path.join(workspace_dir, ".extracted_facts.json")
+        has_facts = os.path.exists(facts_file)
+        if has_facts:
+            with open(facts_file, "r", encoding="utf-8") as f:
+                facts_data = json.load(f)
+            # Flatten dict values to verify
+            def get_flat_values(d):
+                vals = []
+                for k, v in d.items():
+                    if isinstance(v, dict):
+                        vals.extend(get_flat_values(v))
+                    elif isinstance(v, list):
+                        for item in v:
+                            if isinstance(item, dict):
+                                vals.extend(get_flat_values(item))
+                            else:
+                                vals.append(str(item))
+                    else:
+                        vals.append(str(v))
+                return vals
+            flat_facts = get_flat_values(facts_data)
 
         for hf in html_files:
             with open(hf, "r", encoding="utf-8") as f:
                 html_content = f.read()
+            
+            # Check fact enforcement lock
+            if has_facts:
+                for fact in flat_facts:
+                    # Ignore short string noises (less than 3 chars)
+                    if len(fact) >= 3 and fact not in html_content:
+                        print(f"DoD Verification Failed: Locked business fact '{fact}' is missing in generated webpage {os.path.basename(hf)}.")
+                        sys.exit(1)
+                
+                # Reverse Anti-Hallucination check: Look for money/pricing format e.g. $850 USD or $1,450
+                price_patterns = [r'\$\s*\d+[\d,]*\s*(?:USD|EUR|CAD|GBP)?', r'\d+[\d,]*\s*(?:USD|EUR|CAD|GBP)\b']
+                for pattern in price_patterns:
+                    found_prices = re.findall(pattern, html_content, re.IGNORECASE)
+                    for fp in found_prices:
+                        # Normalize found price to match facts
+                        clean_fp = re.sub(r'[\$,\s]', '', fp).lower()
+                        # See if this number/price is anywhere in the flat facts
+                        matched = False
+                        for fact in flat_facts:
+                            clean_fact = re.sub(r'[\$,\s]', '', fact).lower()
+                            if clean_fp in clean_fact or clean_fact in clean_fp:
+                                matched = True
+                                break
+                        if not matched:
+                            print(f"DoD Verification Failed: Potential pricing hallucination detected in {os.path.basename(hf)}: '{fp}'. This price is not locked in .extracted_facts.json!")
+                            sys.exit(1)
             
             # Phase 3: Check Schema JSON-LD exists in head
             if current_phase == 3 and "application/ld+json" not in html_content:
