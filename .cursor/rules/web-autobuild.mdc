@@ -69,7 +69,8 @@ web-autobuild/
     ├── 5-skeleton-html.md            <-- Phase 5: Semantic HTML5 skeleton creation
     ├── 6-web-components.md           <-- Phase 6: Component imports & custom elements hydration
     ├── 7-style-separation.md         <-- Phase 7: Three-tier CSS style separation & verification
-    └── 8-merging-gatekeeper.md       <-- Phase 8: Merging gatekeeper & CI/CD sandbox integration
+    ├── 8-merging-gatekeeper.md       <-- Phase 8: Merging gatekeeper & CI/CD sandbox integration
+    └── 9-runtime-debugging.md        <-- Phase 9: Runtime debugging & self-healing protocol
 ```
 
 
@@ -114,3 +115,7 @@ The pipeline is designed to conform to the high-extensibility CSS separation sta
 ### [Phase 8: Merging Gatekeeper](sub-skills/8-merging-gatekeeper.md)
 *   **Trigger**: Subagent request PR merge. Run static checker and merge state locks.
 *   **Action**: Follow `8-merging-gatekeeper.md`.
+
+### [Phase 9: Runtime Debugging & Self-Healing](sub-skills/9-runtime-debugging.md)
+*   **Trigger**: Web Component execution failure, DOM mounting issue, or script crash.
+*   **Action**: Follow `9-runtime-debugging.md`.

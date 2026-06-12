@@ -29,7 +29,8 @@ agent-skills/
     │       ├── 5-skeleton-html.md
     │       ├── 6-web-components.md
     │       ├── 7-style-separation.md
-    │       └── 8-merging-gatekeeper.md <-- Phase 8: 并行子代理合并网关
+    │       ├── 8-merging-gatekeeper.md <-- Phase 8: 并行子代理合并网关
+    │       └── 9-runtime-debugging.md  <-- Phase 9: 运行时调试与自愈闭环
     ├── web-design/
     │   └── SKILL.md               <-- [核心设计] 视觉体系与交互组件设计哲学（Stripe级B2B审美）
     └── common-checks/
