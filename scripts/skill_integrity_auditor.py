@@ -112,6 +112,17 @@ def workspace_root(file_path):
         curr = parent
 
 def audit_repository(repo_path):
+    # Audit README.md if exists
+    readme_path = os.path.join(repo_path, "README.md")
+    if os.path.exists(readme_path):
+        print(f"Auditing repository README: {readme_path}")
+        with open(readme_path, "r", encoding="utf-8") as f:
+            readme_content = f.read()
+        hardcoded_drive_paths = re.findall(r'(?i)\b(?:[c-z]:[\\/]|file:\/\/\/[c-z]:)', readme_content)
+        if hardcoded_drive_paths:
+            print(f"Error: Hardcoded absolute drive paths found in README.md: {hardcoded_drive_paths}")
+            sys.exit(1)
+
     skills_dir = os.path.join(repo_path, "skills")
     if not os.path.exists(skills_dir):
         print(f"Error: skills folder not found under {repo_path}")
@@ -129,7 +140,7 @@ def audit_repository(repo_path):
         print("\nRepository Audit FAILED!")
         sys.exit(1)
     else:
-        print("\nAll Skills in Repository are fully compliant (AUDIT PASSED)!")
+        print("\nAll Skills and README in Repository are fully compliant (AUDIT PASSED)!")
 
 if __name__ == "__main__":
     target = sys.argv[1] if len(sys.argv) > 1 else "."

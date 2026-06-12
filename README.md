@@ -50,7 +50,7 @@ agent-skills/
 将 `skills/` 目录拷贝到你项目的 `.cursor/rules/` 目录下，Cursor 能够自动读取并应用这些规则限制。
 
 ### 2. 挂载到 Claude Code
-在你的项目根目录下，将 `skills/` 目录软链接到 `.claude/skills/` 即可按需加载：
+在你的项目根目录下，将本仓库的 `skills/` 目录软链接到 `.claude/skills/` 即可按需加载：
 ```bash
-ln -s F:/石头和码/github/agent-skills/skills/ .claude/skills
+ln -s <path_to_agent_skills_repo>/skills/ .claude/skills
 ```
