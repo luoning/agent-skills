@@ -27,6 +27,8 @@ Under large contexts or complex coding workflows, AI coding agents often suffer 
 | :--- | :--- | :--- | :--- |
 | **Absolute Path Leak** | Prompts asking to "use relative links" | **Skill Auditor Gate**: `skill_integrity_auditor.py` blocks any skill containing absolute drive paths or local protocol links. | **Enforced Portability** |
 | **Hardcoded Inline Colors** | Prompts asking to "use CSS variables" | **DoD Gatekeeper**: `pipeline_validator.py` scans and blocks any inline color styling in HTML or Web Components. | **Strict Separated CSS** |
+| **Fact Hallucination** | Standard AI hallucinations in copywriting | **Bidirectional Fact Lock**: Cross-validates all page parameters against `.extracted_facts.json` and flags unmapped numbers. | **Pure Fact Consistency** |
+| **Broken Data Lineage** | Hardcoded numbers without data trace | **Data Lineage Validator**: Blocks page integration if numerical facts lack explicit trace tags (`data-fact-source`). | **100% Traceability** |
 | **Skipping Pipeline Stages** | Agent decides flow dynamically | **Physical State Lock**: Code changes are blocked unless the preceding stage in `.pipeline_state.json` is completed. | **Step-by-Step Delivery** |
 | **Subagent Concurrency** | Race conditions and git conflicts | **Sandbox Isolation Gate**: Enforces `workspace = branch` isolation. Parent Agent acts as merge reviewer. | **Safe Autopilot Merge** |
 
@@ -46,7 +48,7 @@ agent-skills/
 │   └── generate_mdc.py            <-- MDC rules compiler
 └── skills/
     ├── web-autobuild/
-    │   ├── SKILL.md               <-- [Master] 9-Phase Web industrial pipeline
+    │   ├── SKILL.md               <-- [Master] 10-Phase Web industrial pipeline
     │   └── sub-skills/
     │       ├── 1-content-extraction.md
     │       ├── 2-narrative-alignment.md
@@ -56,9 +58,10 @@ agent-skills/
     │       ├── 6-web-components.md
     │       ├── 7-style-separation.md
     │       ├── 8-merging-gatekeeper.md <-- Phase 8: Concurrency merging gateway
-    │       └── 9-runtime-debugging.md  <-- Phase 9: Runtime self-healing loop
+    │       ├── 9-runtime-debugging.md  <-- Phase 9: Runtime self-healing loop
+    │       └── 10-vibecoding-defense.md <-- Phase 10: Vibe Coding facts lock and decision gateway
     ├── web-design/
-    │   └── SKILL.md               <-- [Aesthetics] B2B visual design tokens (Stripe aesthetic)
+    │   └── SKILL.md               <-- [Aesthetics] B2B visual design system and contrast token schema
     └── common-checks/
         └── SKILL.md               <-- Meta-skill auditor & broken links blocker
 ```
@@ -97,10 +100,11 @@ Invoke `web-autobuild` directly. The agent scaffolds functional layouts, hooks c
 ## 🔬 Core Gates Mechanisms
 
 ### Gate 1: Project-level `pipeline_validator.py`
-Fails integration pipeline if styling variables leak:
+Fails integration pipeline if styling variables leak or facts mismatch:
 *   **Block**: Hex/RGB/HSL declarations or color keywords inside `layout.css`.
 *   **Block**: Colors declared inside inline HTML style attributes.
-*   **Block**: Inline style styling inside Web Components JavaScript.
+*   **Block**: Unregistered business numerical fact or broken data lineage (`data-fact-source`).
+*   **Self-Healing recovery**: Automatically compiles a `.pipeline_fix_suggestions.json` mapping out actionable correction guidelines (such as `approve_decision` or `correct_data_source`) on failure.
 
 ### Gate 2: Skill-level `skill_integrity_auditor.py`
 Ensures portability of the skills repository:
