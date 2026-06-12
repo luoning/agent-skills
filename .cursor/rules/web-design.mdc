@@ -24,25 +24,26 @@ Before styling begins, the visual theme parameters (brand identity, primary colo
 
 ## 2. Visual Aesthetics & Token Design
 
-When building CSS themes, you must translate these philosophies into variables inside `variables.css`.
+When building CSS themes, you must translate these philosophies into semantic variables inside `variables.css`.
 
-### Color Palette (Technical & Premium Slate Blue)
-*   **Deep Canvas Background (`--canvas-bg`)**: A soft slate dark blue, e.g. `#0f172a` (Slate 900) or gradients to `#1e293b`. Never use pure black `#000000`.
-*   **Brand Highlight (`--brand-color`)**: A bright electric sky blue, e.g. `#0ea5e9` for borders and dynamic glows.
-*   **Action & Conversion (`--action-color`)**: A vibrant emerald green, e.g. `#10b981`.
-*   **Subtle Borders (`--border-soft`)**: Low-opacity white line, e.g. `rgba(255, 255, 255, 0.08)`.
+### Color Palette (Contrast-Compliant Semantic Token Meta-Schema)
+Rather than hardcoding specific values, coding agents must implement a structured token contract that matches the WCAG 2.1 accessibility standards (contrast ratio >= 4.5:1 for normal text, and >= 3:1 for graphical components):
+*   **Deep Canvas Background (`--canvas-bg`)**: The foundational surface backdrop. Must support layering and visual depth.
+*   **Brand Highlight (`--brand-color`)**: The primary brand focal variable, used to trace interactions, highlights, and micro-animations.
+*   **Action & Conversion (`--action-color`)**: High-saturation action token reserved exclusively for calls-to-action (CTA).
+*   **Subtle Borders (`--border-soft`)**: Low-opacity variable to support structural alignment and glassmorphism styling.
 
 ### Spacing & Rhythm Scale
-*   Use a strict 4px grid system:
+*   Use a consistent, proportional geometric scale (e.g. 4px/8px grid) to declare spacing constants:
     ```css
-    --space-xs: 4px;
-    --space-sm: 8px;
-    --space-md: 16px;
-    --space-lg: 24px;
-    --space-xl: 32px;
-    --space-2xl: 64px;
+    --space-xs: [base_unit * 1];
+    --space-sm: [base_unit * 2];
+    --space-md: [base_unit * 4];
+    --space-lg: [base_unit * 6];
+    --space-xl: [base_unit * 8];
+    --space-2xl: [base_unit * 16];
     ```
-*   Keep layouts breathing with wide vertical padding (`padding: var(--space-2xl) 0`) for section blocks.
+*   Ensure structural container modules breathe with wide paddings decoupled from layouts.
 
 ### Typography
 *   **Headers**: Bold, high-contrast, slightly condensed letter-spacing (e.g. `letter-spacing: -0.025em`) to feel modern.
@@ -53,32 +54,32 @@ When building CSS themes, you must translate these philosophies into variables i
 ## 2. Interactive Components Rules
 
 ### The Glassmorphism Card (Industrial Pedestal)
-All visual container cards must look like floating glass containers:
+All visual container cards must look like floating glass containers leveraging relative background values:
 ```css
 .pedestal-card {
-  background: rgba(30, 41, 59, 0.5); /* Semi-transparent Slate 800 */
+  background: var(--card-bg-opacity); /* Decoupled opacity background */
   backdrop-filter: blur(12px);
   border: 1px solid var(--border-soft);
   border-radius: 12px;
-  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 30px var(--shadow-ambient-color);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .pedestal-card:hover {
   transform: translateY(-4px);
   border-color: var(--brand-color);
-  box-shadow: 0 10px 40px rgba(14, 165, 233, 0.15); /* Brand cyan glow */
+  box-shadow: 0 10px 40px var(--brand-glow-color); /* Linked to brand highlight variable */
 }
 ```
 
 ### Depth & Multi-Layer Shadows
-Never use flat black shadow rules. Tint shadows with background hues:
-*   **Good**: `box-shadow: 0 12px 24px -10px rgba(15, 23, 42, 0.5);`
+Never use flat black shadow rules. Tint shadows with custom property variables to match background hues:
+*   **Good**: `box-shadow: 0 12px 24px -10px var(--shadow-ambient-tint);`
 *   **Bad**: `box-shadow: 0 12px 24px #000;`
 
 ---
 
 ## 3. Definition of Done (DoD)
-*   [ ] CSS variables file (`variables.css`) contains the slate/sky-blue design system palette.
+*   [ ] CSS variables file (`variables.css`) contains the semantic design system palette tokens.
 *   [ ] Main title elements utilize custom condensed letter-spacing.
 *   [ ] Cards implement custom transition cubic-bezier states rather than default ease curves.

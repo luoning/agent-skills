@@ -141,6 +141,35 @@ def validate_pipeline(workspace_dir):
                         if not any(unit in num_str for unit in ['px', 'vh', 'vw', 'ms', 'deg']):
                             print(f"DoD Verification Failed: Unregistered business numerical fact '{num_str}' detected in {os.path.basename(hf)}. This value is not declared in .extracted_facts.json!")
                             sys.exit(1)
+                
+                # Data Lineage Check: Verify all data-fact-source attributes resolve to valid keys in .extracted_facts.json
+                lineage_sources = re.findall(r'data-fact-source=["\']([^"\']+)["\']', html_content)
+                for src in lineage_sources:
+                    # Resolve JSON dot notation path inside facts_data
+                    parts = src.split('.')
+                    current_node = facts_data
+                    resolved = True
+                    for part in parts:
+                        if isinstance(current_node, dict) and part in current_node:
+                            current_node = current_node[part]
+                        elif isinstance(current_node, list):
+                            try:
+                                idx = int(part)
+                                if 0 <= idx < len(current_node):
+                                    current_node = current_node[idx]
+                                else:
+                                    resolved = False
+                                    break
+                            except ValueError:
+                                resolved = False
+                                break
+                        else:
+                            resolved = False
+                            break
+                    
+                    if not resolved:
+                        print(f"DoD Verification Failed: Broken data lineage in {os.path.basename(hf)}. The data-fact-source '{src}' does not resolve to a valid fact key in .extracted_facts.json!")
+                        sys.exit(1)
             
             # Phase 3: Check Schema JSON-LD exists in head
             if current_phase == 3 and "application/ld+json" not in html_content:
