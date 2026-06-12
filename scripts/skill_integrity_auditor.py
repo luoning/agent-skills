@@ -6,6 +6,13 @@ import yaml
 
 
 def check_markdown_links(content, skill_md_path):
+    # Portability check: Ensure no business concretizations (like Sofreight/oversea/track) leak into universal skills
+    concretization_blacklist = ['sofreight', 'oversea/track']
+    for term in concretization_blacklist:
+        if re.search(r'(?i)\b' + re.escape(term) + r'\b', content) or term.lower() in content.lower():
+            print(f"Error: Concretization leak detected in '{os.path.basename(skill_md_path)}'. Universal skills must remain industry-agnostic. Found forbidden term: '{term}'")
+            return False
+
     links = re.findall(r'\[([^\]]*)\]\((file:///|(?!\w+://))([^)]*)\)', content)
     base_dir = os.path.dirname(skill_md_path)
     
