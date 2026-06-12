@@ -124,4 +124,12 @@ The pipeline is designed to conform to the high-extensibility CSS separation sta
 *   **Trigger**: Local builds or code audits. Block unapproved decisions and fact hallucinations.
 *   **Action**: Follow `10-vibecoding-defense.md`.
 
+---
+
+## 7. 🛠️ Automated Recovery Loop (修复与自动反馈闭环)
+When the validator (`pipeline_validator.py`) returns a failure and exit code 1:
+1. It generates a `.pipeline_fix_suggestions.json` in the workspace root.
+2. Coding agents **MUST** immediately open this file, parse the `suggested_actions`, and apply the corrective `instruction` (e.g. adding missing facts to `.extracted_facts.json` or reverting unapproved elements) before retrying the build.
+3. This creates a self-healing loop preventing build deadlocks for junior developers.
+
 

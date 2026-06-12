@@ -3,6 +3,23 @@ import sys
 import json
 import re
 
+def fail_with_suggestions(workspace_dir, error_msg, fix_type, suggestions):
+    """
+    Saves an automated recovery/fix patch into .pipeline_fix_suggestions.json
+    to lower Vibe Coder debugging friction, and exits.
+    """
+    print(error_msg)
+    fix_file = os.path.join(workspace_dir, ".pipeline_fix_suggestions.json")
+    payload = {
+        "status": "blocked",
+        "error_message": error_msg,
+        "fix_type": fix_type,
+        "suggested_actions": suggestions
+    }
+    with open(fix_file, "w", encoding="utf-8") as f:
+        json.dump(payload, f, indent=2, ensure_ascii=False)
+    sys.exit(1)
+
 def validate_pipeline(workspace_dir):
     """
     Performs automated DoD checkgates for Phase 1 to Phase 7.
@@ -45,8 +62,23 @@ def validate_pipeline(workspace_dir):
                     decisions = json.load(f)
                 unapproved = [d for d in decisions if not d.get("human_approved", False)]
                 if unapproved:
-                    print(f"DoD Verification Failed: There are unapproved AI recommendations in .decision_pending.json: {[u.get('proposal_id') for u in unapproved]}")
-                    sys.exit(1)
+                    unapproved_ids = [u.get('proposal_id') for u in unapproved]
+                    err_msg = f"DoD Verification Failed: There are unapproved AI recommendations in .decision_pending.json: {unapproved_ids}"
+                    fail_with_suggestions(
+                        workspace_dir,
+                        err_msg,
+                        "unapproved_decision",
+                        [
+                            {
+                                "action": "approve_decision",
+                                "instruction": f"Open '.decision_pending.json' and change 'human_approved' to true for proposals: {unapproved_ids}"
+                            },
+                            {
+                                "action": "rollback_code",
+                                "instruction": f"Remove the implemented code block corresponding to proposals {unapproved_ids} from files if you reject them."
+                            }
+                        ]
+                    )
             except json.JSONDecodeError:
                 print("DoD Verification Failed: .decision_pending.json contains invalid JSON syntax.")
                 sys.exit(1)
@@ -111,8 +143,18 @@ def validate_pipeline(workspace_dir):
                 for fact in flat_facts:
                     # Ignore short string noises (less than 3 chars)
                     if len(fact) >= 3 and fact not in html_content:
-                        print(f"DoD Verification Failed: Locked business fact '{fact}' is missing in generated webpage {os.path.basename(hf)}.")
-                        sys.exit(1)
+                        err_msg = f"DoD Verification Failed: Locked business fact '{fact}' is missing in generated webpage {os.path.basename(hf)}."
+                        fail_with_suggestions(
+                            workspace_dir,
+                            err_msg,
+                            "missing_fact",
+                            [
+                                {
+                                    "action": "insert_fact",
+                                    "instruction": f"Open '{os.path.basename(hf)}' and render the missing fact string: '{fact}'."
+                                }
+                            ]
+                        )
                 
                 # Reverse Anti-Hallucination check: Detect arbitrary numerical values/specifications in HTML
                 # (e.g. 1500, $250, 99.9%, 40HQ) and ensure they are backed by the facts list.
@@ -139,8 +181,22 @@ def validate_pipeline(workspace_dir):
                     if raw_num not in flat_fact_numbers:
                         # Allow standard CSS unit styles like 1px, 100% but block potential business specification hallucinations
                         if not any(unit in num_str for unit in ['px', 'vh', 'vw', 'ms', 'deg']):
-                            print(f"DoD Verification Failed: Unregistered business numerical fact '{num_str}' detected in {os.path.basename(hf)}. This value is not declared in .extracted_facts.json!")
-                            sys.exit(1)
+                            err_msg = f"DoD Verification Failed: Unregistered business numerical fact '{num_str}' detected in {os.path.basename(hf)}. This value is not declared in .extracted_facts.json!"
+                            fail_with_suggestions(
+                                workspace_dir,
+                                err_msg,
+                                "hallucinated_fact",
+                                [
+                                    {
+                                        "action": "declare_fact",
+                                        "instruction": f"Open '.extracted_facts.json' and add the missing specification/price/numerical value containing '{raw_num}'."
+                                    },
+                                    {
+                                        "action": "remove_fact",
+                                        "instruction": f"Open '{os.path.basename(hf)}' and delete/correct the unregistered number '{num_str}'."
+                                    }
+                                ]
+                            )
                 
                 # Data Lineage Check: Verify all data-fact-source attributes resolve to valid keys in .extracted_facts.json
                 lineage_sources = re.findall(r'data-fact-source=["\']([^"\']+)["\']', html_content)
@@ -168,8 +224,18 @@ def validate_pipeline(workspace_dir):
                             break
                     
                     if not resolved:
-                        print(f"DoD Verification Failed: Broken data lineage in {os.path.basename(hf)}. The data-fact-source '{src}' does not resolve to a valid fact key in .extracted_facts.json!")
-                        sys.exit(1)
+                        err_msg = f"DoD Verification Failed: Broken data lineage in {os.path.basename(hf)}. The data-fact-source '{src}' does not resolve to a valid fact key in .extracted_facts.json!"
+                        fail_with_suggestions(
+                            workspace_dir,
+                            err_msg,
+                            "broken_lineage",
+                            [
+                                {
+                                    "action": "correct_data_source",
+                                    "instruction": f"Inspect '{os.path.basename(hf)}' and correct the path '{src}' to point to a valid field inside '.extracted_facts.json'."
+                                }
+                            ]
+                        )
             
             # Phase 3: Check Schema JSON-LD exists in head
             if current_phase == 3 and "application/ld+json" not in html_content:
