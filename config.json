@@ -8,6 +8,7 @@
   },
   "modules": [
     "skills/web-autobuild",
-    "skills/common-checks"
+    "skills/common-checks",
+    "skills/web-design"
   ]
 }

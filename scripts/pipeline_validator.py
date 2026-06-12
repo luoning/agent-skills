@@ -32,8 +32,28 @@ def validate_pipeline(workspace_dir):
     with open(state_file, "r", encoding="utf-8") as f:
         state = json.load(f)
         
+    # Schema version checks for backward compatibility
+    schema_version = state.get("schema_version", "1.0.0")
+    supported_versions = ["1.0.0"]
+    if schema_version not in supported_versions:
+        print(f"Error: Unsupported state schema version '{schema_version}'. Supported: {supported_versions}")
+        sys.exit(1)
+        
     current_phase = state.get("current_phase", 1)
-    print(f"Checking project state in {workspace_dir}. Current phase: {current_phase}")
+    
+    # Dynamically resolve src_dir config
+    src_dir_val = state.get("src_dir")
+    if src_dir_val:
+        src_dir = os.path.join(workspace_dir, src_dir_val)
+    else:
+        # Fallback for legacy hardcoded path matching
+        legacy_path = os.path.join(workspace_dir, "SofreightWorkspace/oversea/track")
+        if os.path.exists(legacy_path):
+            src_dir = legacy_path
+        else:
+            src_dir = workspace_dir
+            
+    print(f"Checking project state in {workspace_dir}. Current phase: {current_phase}, Src directory: {src_dir}")
     
     # ------------------------------------------------------------------------
     # Phase 1 Check: Fact Extraction File
@@ -94,9 +114,13 @@ def validate_pipeline(workspace_dir):
         if os.path.exists(copy_file):
             with open(copy_file, "r", encoding="utf-8") as f:
                 copy_content = f.read()
-            # Prevent lazy/fluffy marketing terms
-            fluffy_terms = ['最快', '最好', '顶级', '革命性', '无敌']
-            found_fluff = [term for term in fluffy_terms if term in copy_content]
+            # Prevent lazy/fluffy marketing terms (Bilingual support)
+            fluffy_terms = [
+                '最快', '最好', '顶级', '革命性', '无敌',
+                'revolutionary', 'unmatched', 'game-changing', 
+                'world-class', 'best-in-class', 'innovative'
+            ]
+            found_fluff = [term for term in fluffy_terms if re.search(r'\b' + re.escape(term) + r'\b', copy_content, re.IGNORECASE) or (term in copy_content and ord(term[0]) > 127)]
             if found_fluff:
                 print(f"DoD Verification Failed: .narrative_copy.md contains fluffy marketing terms: {found_fluff}")
                 sys.exit(1)
@@ -105,12 +129,13 @@ def validate_pipeline(workspace_dir):
     # Phase 3 & 4 Checks: Structured Schema JSON-LD & GEO Anchors in HTML
     # ------------------------------------------------------------------------
     if current_phase >= 3:
-        html_files = [f for f in os.listdir(workspace_dir) if f.endswith(".html")]
-        # Fallback to search recursively if in track/ subdirectory
-        if not html_files:
-            track_dir = os.path.join(workspace_dir, "SofreightWorkspace/oversea/track")
-            if os.path.exists(track_dir):
-                html_files = [os.path.join(track_dir, f) for f in os.listdir(track_dir) if f.endswith(".html")]
+        # Search HTML files inside the resolved src_dir
+        html_files = []
+        if os.path.exists(src_dir):
+            if os.path.isdir(src_dir):
+                html_files = [os.path.join(src_dir, f) for f in os.listdir(src_dir) if f.endswith(".html")]
+            elif src_dir.endswith(".html"):
+                html_files = [src_dir]
         # Verify that all facts locked in .extracted_facts.json are physically present in HTML content to block hallucinations
         facts_file = os.path.join(workspace_dir, ".extracted_facts.json")
         has_facts = os.path.exists(facts_file)
@@ -254,14 +279,14 @@ def validate_pipeline(workspace_dir):
     # ------------------------------------------------------------------------
     if current_phase >= 5:
         # Check layout CSS file exists
-        layout_path = os.path.join(workspace_dir, "SofreightWorkspace/oversea/track/css/layout.css")
+        layout_path = os.path.join(src_dir, "css/layout.css")
         if current_phase == 5 and not os.path.exists(layout_path):
             print("DoD Verification Failed: layout.css must be initialized in Phase 5.")
             sys.exit(1)
 
     if current_phase >= 6:
         # Check Web Components modules
-        comp_dir = os.path.join(workspace_dir, "SofreightWorkspace/oversea/track/components")
+        comp_dir = os.path.join(src_dir, "components")
         if os.path.exists(comp_dir):
             js_components = [os.path.join(comp_dir, f) for f in os.listdir(comp_dir) if f.endswith(".js")]
             for jsc in js_components:
@@ -275,7 +300,7 @@ def validate_pipeline(workspace_dir):
     # ------------------------------------------------------------------------
     # Phase 7 Check: Style Separation
     # ------------------------------------------------------------------------
-    layout_path = os.path.join(workspace_dir, "SofreightWorkspace/oversea/track/css/layout.css")
+    layout_path = os.path.join(src_dir, "css/layout.css")
     if current_phase == 7 and os.path.exists(layout_path):
         with open(layout_path, "r", encoding="utf-8") as f:
             content = f.read()

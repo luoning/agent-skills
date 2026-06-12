@@ -6,7 +6,7 @@ echo "⚡ AI Agent Skills - One-Click Installer & Rule Compiler ⚡"
 echo "========================================================"
 
 # 1. Download scripts and skills structure from repository
-REPO_RAW_URL="https://raw.githubusercontent.com/username/agent-skills/main"
+REPO_RAW_URL="https://raw.githubusercontent.com/luoning/agent-skills/master"
 
 echo "📥 Creating target directories..."
 mkdir -p scripts skills/common-checks skills/web-autobuild/sub-skills skills/web-design .cursor/rules
@@ -22,7 +22,7 @@ curl -fsSL "$REPO_RAW_URL/skills/web-design/SKILL.md" -o skills/web-design/SKILL
 curl -fsSL "$REPO_RAW_URL/skills/web-autobuild/SKILL.md" -o skills/web-autobuild/SKILL.md
 
 # Fetch web-autobuild sub-skills
-for phase in 1-content-extraction 2-narrative-alignment 3-data-structuring 4-geo-anchors 5-skeleton-html 6-web-components 7-style-separation 8-merging-gatekeeper 9-runtime-debugging; do
+for phase in 1-content-extraction 2-narrative-alignment 3-data-structuring 4-geo-anchors 5-skeleton-html 6-web-components 7-style-separation 8-merging-gatekeeper 9-runtime-debugging 10-vibecoding-defense; do
   curl -fsSL "$REPO_RAW_URL/skills/web-autobuild/sub-skills/$phase.md" -o "skills/web-autobuild/sub-skills/$phase.md"
 done
 
