@@ -28,7 +28,10 @@ agent-skills/
     │       ├── 4-geo-anchors.md
     │       ├── 5-skeleton-html.md
     │       ├── 6-web-components.md
-    │       └── 7-style-separation.md
+    │       ├── 7-style-separation.md
+    │       └── 8-merging-gatekeeper.md <-- Phase 8: 并行子代理合并网关
+    ├── web-design/
+    │   └── SKILL.md               <-- [核心设计] 视觉体系与交互组件设计哲学（Stripe级B2B审美）
     └── common-checks/
         └── SKILL.md               <-- 通用代码规范与提单 CR 校验技能
 ```
