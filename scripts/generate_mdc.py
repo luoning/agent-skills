@@ -46,8 +46,8 @@ def generate_cursor_rules():
     # Standard glob bindings for matching rules
     glob_bindings = {
         "skills-auditor": ["skills/**/*.md", "README.md"],
-        "web-autobuild": ["SofreightWorkspace/oversea/track/**/*.html", "SofreightWorkspace/oversea/track/**/*.css", "SofreightWorkspace/oversea/track/**/*.js"],
-        "web-design": ["SofreightWorkspace/oversea/track/**/*.css", "SofreightWorkspace/oversea/track/css/variables.css"]
+        "web-autobuild": ["**/*.html", "**/*.css", "**/*.js"],
+        "web-design": ["**/*.css", "**/variables.css"]
     }
     
     generated_count = 0

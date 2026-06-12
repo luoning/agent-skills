@@ -1,6 +1,6 @@
 ---
 description: Use when designing web interfaces, establishing layout aesthetics, styling interactive cards, or configuring global CSS theme variables.
-globs: ['SofreightWorkspace/oversea/track/**/*.css', 'SofreightWorkspace/oversea/track/css/variables.css']
+globs: ['**/*.css', '**/variables.css']
 alwaysApply: false
 ---
 

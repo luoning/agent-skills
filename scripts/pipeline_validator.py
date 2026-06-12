@@ -46,12 +46,8 @@ def validate_pipeline(workspace_dir):
     if src_dir_val:
         src_dir = os.path.join(workspace_dir, src_dir_val)
     else:
-        # Fallback for legacy hardcoded path matching
-        legacy_path = os.path.join(workspace_dir, "SofreightWorkspace/oversea/track")
-        if os.path.exists(legacy_path):
-            src_dir = legacy_path
-        else:
-            src_dir = workspace_dir
+        # Default directly to workspace root for generic environments
+        src_dir = workspace_dir
             
     print(f"Checking project state in {workspace_dir}. Current phase: {current_phase}, Src directory: {src_dir}")
     
