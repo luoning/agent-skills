@@ -101,8 +101,8 @@ The pipeline is designed to conform to the high-extensibility CSS separation sta
 *   **Trigger**: Semantic HTML built. Inject custom elements and hydrate templates.
 *   **Action**: Follow `6-web-components.md`.
 
-### [Phase 7: Style Separation](sub-skills/7-style-separation.md)
-*   **Trigger**: HTML fully hydrated. Apply styles into `variables.css`, `layout.css`, and `theme.css`. Run the test harness.
+### [Phase 7: Style Separation & Visual Design](sub-skills/7-style-separation.md)
+*   **Trigger**: HTML fully hydrated. Consult [web-design](../web-design/SKILL.md) for global design tokens, color philosophy, and interactive card transitions. Then, apply styles into `variables.css`, `layout.css`, and `theme.css`. Run the test harness.
 *   **Action**: Follow `7-style-separation.md`.
 
 ### [Phase 8: Merging Gatekeeper](sub-skills/8-merging-gatekeeper.md)
