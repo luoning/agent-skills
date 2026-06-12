@@ -62,8 +62,11 @@ agent-skills/
     │       └── 10-vibecoding-defense.md <-- Phase 10: Vibe Coding facts lock and decision gateway
     ├── web-design/
     │   └── SKILL.md               <-- [Aesthetics] B2B visual design system and contrast token schema
-    └── common-checks/
-        └── SKILL.md               <-- Meta-skill auditor & broken links blocker
+    ├── common-checks/
+    │   ├── SKILL.md               <-- [Master] Meta-skill auditor & broken links blocker
+    │   └── sub-skills/
+    │       └── skill-generator.md <-- Automatic skill generation, registration, and auditing spec
+    └── boilerplate-skill.md       <-- Standardized general skill boilerplate (derivation baseline)
 ```
 
 ---

@@ -61,8 +61,11 @@ agent-skills/
     │       └── 10-vibecoding-defense.md <-- Phase 10: Vibe Coding 事实锁与决策网关
     ├── web-design/
     │   └── SKILL.md               <-- [视觉审美] B2B 工业级无障碍高对比度 Token 规范
-    └── common-checks/
-        └── SKILL.md               <-- 技能生命周期元审计与死链校验门
+    ├── common-checks/
+    │   ├── SKILL.md               <-- [主控] 技能生命周期元审计与死链校验门
+    │   └── sub-skills/
+    │       └── skill-generator.md <-- 技能自动生成、注册与双模式审计规范
+    └── boilerplate-skill.md       <-- 标准化通用技能模版（可作为派生基准）
 ```
 
 ---
