@@ -107,6 +107,15 @@ Fails integration pipeline if styling variables leak or facts mismatch:
 *   **Self-Healing recovery**: Automatically compiles a `.pipeline_fix_suggestions.json` mapping out actionable correction guidelines (such as `approve_decision` or `correct_data_source`) on failure.
 
 ### Gate 2: Skill-level `skill_integrity_auditor.py`
-Ensures portability of the skills repository:
+Ensures portability and prevents private leaks in the skills repository:
 *   **Block**: Any local absolute path or disk drive prefixes (e.g. windows/unix absolute paths).
 *   **Block**: Syntax error in YAML frontmatter or missing trigger description.
+*   **Block**: Custom forbidden terms or path patterns listed in `.skill_audit_blacklist` (e.g. project-specific names or local directory names).
+
+---
+
+## 🚫 Custom Audit Blacklist (`.skill_audit_blacklist`)
+To prevent project-specific parameters or local folder namespaces from leaking into your reusable skill files, populate the `.skill_audit_blacklist` file in the repository root:
+*   Add patterns to block (one keyword/path per line).
+*   Lines starting with `#` are treated as comments and ignored.
+*   The meta-auditor will block the verification check if any skill markdown file or generated MDC rule matches these words.

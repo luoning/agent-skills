@@ -1,0 +1,16 @@
+# AI Agent Skills Framework - Meta-Skill Compliance Blacklist
+# 
+# Use this file to define terms, paths, or names that MUST NOT appear in any SKILL.md 
+# or sub-skill files. This ensures your skills remain generic and portable across projects.
+# 
+# Rules:
+# - Blank lines and lines starting with '#' are ignored.
+# - Each line is treated as a case-insensitive literal string pattern to match against.
+
+# Specific business domains / legacy paths to block
+SofreightWorkspace
+oversea/track
+
+# Personal / Environment information to prevent leaks
+石頭和碼
+石头和码

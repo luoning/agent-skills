@@ -3,16 +3,37 @@ import sys
 import re
 import yaml
 
+BLACKLIST_PATTERNS = []
+
+def load_blacklist(repo_path):
+    """
+    Loads custom forbidden terms/words from .skill_audit_blacklist.
+    """
+    global BLACKLIST_PATTERNS
+    blacklist_file = os.path.join(repo_path, ".skill_audit_blacklist")
+    if os.path.exists(blacklist_file):
+        with open(blacklist_file, "r", encoding="utf-8") as f:
+            for line in f:
+                line = line.strip()
+                if line and not line.startswith("#"):
+                    BLACKLIST_PATTERNS.append(line.lower())
+    print(f"Loaded {len(BLACKLIST_PATTERNS)} forbidden terms from blacklist.")
+
+def verify_content_blacklist(content, file_label):
+    """
+    Scans the given content for forbidden words.
+    """
+    content_lower = content.lower()
+    for term in BLACKLIST_PATTERNS:
+        if term in content_lower:
+            print(f"Error: Forbidden term '{term}' from .skill_audit_blacklist found in {file_label}!")
+            return False
+    return True
+
+
 
 
 def check_markdown_links(content, skill_md_path):
-    # Portability check: Ensure no business concretizations (like Sofreight/oversea/track) leak into universal skills
-    concretization_blacklist = ['sofreight', 'oversea/track']
-    for term in concretization_blacklist:
-        if re.search(r'(?i)\b' + re.escape(term) + r'\b', content) or term.lower() in content.lower():
-            print(f"Error: Concretization leak detected in '{os.path.basename(skill_md_path)}'. Universal skills must remain industry-agnostic. Found forbidden term: '{term}'")
-            return False
-
     links = re.findall(r'\[([^\]]*)\]\((file:///|(?!\w+://))([^)]*)\)', content)
     base_dir = os.path.dirname(skill_md_path)
     
@@ -53,6 +74,10 @@ def audit_single_skill(skill_md_path):
 
     with open(skill_md_path, "r", encoding="utf-8") as f:
         content = f.read()
+
+    # Blacklist check
+    if not verify_content_blacklist(content, os.path.basename(skill_md_path)):
+        return False
 
     # 1. Frontmatter check
     is_main_skill = os.path.basename(skill_md_path).lower() == "skill.md"
@@ -119,15 +144,37 @@ def workspace_root(file_path):
         curr = parent
 
 def audit_repository(repo_path):
+    # Load blacklist settings first
+    load_blacklist(repo_path)
+    
     # Audit README.md if exists
     readme_path = os.path.join(repo_path, "README.md")
     if os.path.exists(readme_path):
         print(f"Auditing repository README: {readme_path}")
         with open(readme_path, "r", encoding="utf-8") as f:
             readme_content = f.read()
+        
+        if not verify_content_blacklist(readme_content, "README.md"):
+            sys.exit(1)
+            
         hardcoded_drive_paths = re.findall(r'(?i)\b(?:[c-z]:[\\/]|file:\/\/\/[c-z]:)', readme_content)
         if hardcoded_drive_paths:
             print(f"Error: Hardcoded absolute drive paths found in README.md: {hardcoded_drive_paths}")
+            sys.exit(1)
+
+    # Audit README_zh.md if exists
+    readme_zh_path = os.path.join(repo_path, "README_zh.md")
+    if os.path.exists(readme_zh_path):
+        print(f"Auditing repository README_zh: {readme_zh_path}")
+        with open(readme_zh_path, "r", encoding="utf-8") as f:
+            readme_zh_content = f.read()
+            
+        if not verify_content_blacklist(readme_zh_content, "README_zh.md"):
+            sys.exit(1)
+            
+        hardcoded_drive_paths = re.findall(r'(?i)\b(?:[c-z]:[\\/]|file:\/\/\/[c-z]:)', readme_zh_content)
+        if hardcoded_drive_paths:
+            print(f"Error: Hardcoded absolute drive paths found in README_zh.md: {hardcoded_drive_paths}")
             sys.exit(1)
 
     # Audit generated MDC files if they exist in .cursor/rules
@@ -139,6 +186,10 @@ def audit_repository(repo_path):
                 print(f"Auditing generated Cursor Rule: {mdc_path}")
                 with open(mdc_path, "r", encoding="utf-8") as f:
                     mdc_content = f.read()
+                
+                if not verify_content_blacklist(mdc_content, f"Cursor Rule {file}"):
+                    sys.exit(1)
+                    
                 hardcoded_drive_paths = re.findall(r'(?i)\b(?:[c-z]:[\\/]|file:\/\/\/[c-z]:)', mdc_content)
                 if hardcoded_drive_paths:
                     print(f"Error: Hardcoded absolute drive paths found in Cursor Rule {file}: {hardcoded_drive_paths}")
