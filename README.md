@@ -1,26 +1,49 @@
-# AI Agent Skills Repository
+# 🛡️ AI Agent Skills Framework
 
-这是一个遵循 GitHub 生产级 AI 编码智能体设计标准（如 `addyosmani/agent-skills`）构建的模块化、可验证的 **AI Agent 技能库框架**。
+> **The Physical Sandbox & Aesthetic Governance Suite for Coding Agents**  
+> 停止让 AI 靠“感觉”写代码。这是一个为 Cursor, Claude Code, Windsurf 和 Copilot 设计的契约式开发、防样式污染与运行时自愈的 AI 智能体技能规范库。
 
-该框架专为现代 AI 编码助手（如 Claude Code、Cursor、Copilot、Gemini CLI 等）设计，支持通过统一的命令行和物理状态文件约束，引导 Agent 严格执行标准开发生命周期，杜绝偷懒与样式/逻辑污染。
+<p align="center">
+  <img src="https://img.shields.io/badge/Cursor-MDC%20Ready-0ea5e9?style=for-the-badge&logo=cursor" alt="Cursor MDC Ready">
+  <img src="https://img.shields.io/badge/Claude%20Code-Compatible-6366f1?style=for-the-badge&logo=anthropic" alt="Claude Code Compatible">
+  <img src="https://img.shields.io/badge/Windsurf-Supported-10b981?style=for-the-badge&logo=windsurf" alt="Windsurf Supported">
+  <img src="https://img.shields.io/badge/Autopilot-Sandboxed-f43f5e?style=for-the-badge" alt="Autopilot Sandboxed">
+</p>
 
 ---
 
-## 📂 目录结构与技能体系
+## 💡 为什么需要它？
 
-本仓库采用“主控中心 + 独立子技能 + 物理验证脚本”的紧凑型架构：
+在大上下文或复杂任务下，传统的 AI 编码助理（如 Cursor Rules）极易发生**“指令漂移（Instruction Drift）”**，导致：
+*   **规避与偷懒**：AI 找借口把视觉颜色硬编码在 HTML `style` 中，或在布局文件中塞满 hex/rgb。
+*   **设计解耦破碎**：结构骨架（`layout.css`）与主题（`theme.css`）严重混杂，无法进行二次品牌换肤。
+*   **运行期崩溃**：生成的 Web Components 没有进行生命周期挂载防错，产生未捕获的 Console 崩溃。
+
+### 🚨 规避对抗方案对比 (Anti-Evasion Matrix)
+
+| 场景 | 传统做法（Soft Rules） | 本框架做法（Hard Sandboxing） | 结果 |
+| :--- | :--- | :--- | :--- |
+| **阻断绝对路径** | 技能文档包含绝对链接 | **元审计器**：`skill_integrity_auditor.py` 扫描并阻断任何带有本地绝对盘符的链接（确保全员环境通用性）。 | **项目纯净** |
+| **行内样式硬编码** | Prompt 申明："请勿写行内样式" | **DoD 静态拦截**：`pipeline_validator.py` 扫描 HTML 中任何带有 color 等修饰的 style 属性，直接报错阻断。 | **AI 妥协重写** |
+| **流水线越界跳步骤** | AI 自由发挥，直接生成页面 | **物理状态锁**：必须满足前置 `.pipeline_state.json` 阶段 DoD 并写盘，才能加载下一步技能。 | **步步为营** |
+| **并行子代理代码合并** | 发生 Git 冲突与状态锁污染 | **Gatekeeper 隔离门**：强制 `workspace = branch` 隔离，主 Agent 扮演 Gatekeeper 校验合并。 | **安全归档** |
+
+---
+
+## 📂 技能库目录架构
 
 ```text
 agent-skills/
-├── README.md                      <-- 仓库总览与说明文档
+├── README.md                      <-- 极客视觉包装说明书
 ├── config.json                    <-- 技能库配置文件
 ├── scripts/
-│   ├── pipeline_validator.py      <-- 通用物理状态锁与代码隔离静态验证器
-│   ├── skill_integrity_auditor.py <-- 元完备性校验脚本
-│   └── generate_mdc.py            <-- 一键生成 Cursor MDC 规则脚手架
+│   ├── install.sh                 <-- 一键 Curl 极速安装挂载脚本
+│   ├── pipeline_validator.py      <-- 静态 DoD 物理校验网关（防 CSS 泄露）
+│   ├── skill_integrity_auditor.py <-- 技能元完备性审计器（阻断本地绝对路径）
+│   └── generate_mdc.py            <-- MDC 编译器（将技能自动编译为 Cursor 原生规则）
 └── skills/
     ├── web-autobuild/
-    │   ├── SKILL.md               <-- [主控] 7阶段 Web 自动化构建流水线
+    │   ├── SKILL.md               <-- [主控] 9阶段网页工业化流水线
     │   └── sub-skills/
     │       ├── 1-content-extraction.md
     │       ├── 2-narrative-alignment.md
@@ -29,38 +52,54 @@ agent-skills/
     │       ├── 5-skeleton-html.md
     │       ├── 6-web-components.md
     │       ├── 7-style-separation.md
-    │       ├── 8-merging-gatekeeper.md <-- Phase 8: 并行子代理合并网关
-    │       └── 9-runtime-debugging.md  <-- Phase 9: 运行时调试与自愈闭环
+    │       ├── 8-merging-gatekeeper.md <-- Phase 8: 并行子代理隔离与合并网关
+    │       └── 9-runtime-debugging.md  <-- Phase 9: 运行时自愈与 Console 降噪契约
     ├── web-design/
-    │   └── SKILL.md               <-- [核心设计] 视觉体系与交互组件设计哲学（Stripe级B2B审美）
+    │   └── SKILL.md               <-- [视觉审美] B2B 工业级设计哲学与交互 Token 规范
     └── common-checks/
-        └── SKILL.md               <-- 通用代码规范与提单 CR 校验技能
+        └── SKILL.md               <-- 技能生命周期元审计与死链校验门
 ```
 
 ---
 
-## 🛠️ 核心设计原则
+## ⚡ 极速起步 (1分钟挂载)
 
-1. **物理锁契约 (State Lock Protocol)**：
-   利用根目录下的 `.pipeline_state.json` 跟踪 Agent 工作进度，强制执行“前置步骤未通过 DoD (Definition of Done)，禁止继续编写代码”的物理约束。
-2. **零颜色污染 (Zero Color Pollution)**：
-   要求所有的网页物理骨架布局与视觉主题进行彻底分离。提供 `pipeline_validator.py` 自动化测试脚本，强力屏蔽任何 rgba/hsla/内置颜色名以及 HTML 行内样式的硬编码色彩泄露。
-3. **心智对齐与 GEO 优化**：
-   在技能链的前端强化内容拆解与面向买家决策心智的文案翻译；在中端强制要求为数据和 FAQ 注入唯一的语义化 HTML 锚点 ID，使 AI 生成式搜索引擎能够精准召回 Citation 跳转。
+### 选项 1：一键挂载到你当前的项目 (推荐)
+在你的**目标项目根目录**下运行以下命令，即可全自动拉取规范、部署验证器并**编译出适合当前项目目录的 Cursor MDC 规则**：
 
----
+```bash
+curl -fsSL https://raw.githubusercontent.com/username/agent-skills/main/scripts/install.sh | bash
+```
 
-## 🚀 如何在项目中使用
-
-### 1. 自动编译生成 Cursor MDC 规则 (推荐)
-本仓库提供了一键转换脚本，可将系统技能库自动转换为符合 Cursor MDC 规范的自动触发规则：
+### 选项 2：手动编译导出 MDC 规则
+如果你克隆了本仓库，可直接运行以下命令一键编译生成原生 `.cursor/rules/*.mdc` 文件：
 ```bash
 python scripts/generate_mdc.py
 ```
-这将在项目根目录下生成 `.cursor/rules/` 目录以及对应的 `*.mdc` 文件（自动绑定对应的 glob 文件匹配条件），Cursor 即可在修改相关文件时智能自动加载。
+编译后，Cursor 将在修改 HTML/CSS/JS 文件时**自动匹配、按需懒加载**对应的分阶段技能规则，大幅节省 Token 消耗。
 
-### 2. 挂载到 Claude Code
-在你的项目根目录下，将本仓库的 `skills/` 目录软链接到 `.claude/skills/` 即可按需加载：
-```bash
-ln -s <path_to_agent_skills_repo>/skills/ .claude/skills
-```
+---
+
+## 🔌 核心开发流
+
+### 流派 1：直接构建模式 (Direct Build)
+直接启动 `web-autobuild` 主控技能，Agent 将按部就班地引导你完成：数据提取 ➔ 骨架 HTML 5 搭建 ➔ 组件挂载 ➔ 静态 DoD 校验 ➔ 合并校验。
+
+### 流派 2：豪华设计-构建模式 (Premium Design-Build)
+1. 启动 `web-design` 技能，AI 助手将进入“顶尖 UI 设计师”人格，规划页面设计 Token。
+2. 随后启动 `web-autobuild`，将提取出的审美风格锁入 Phase 1，输出具备流光溢彩（Glassmorphism）、微光边框及多层阴影的高级 B2B 工业展品级落地页。
+
+---
+
+## 🔬 静态与元审计双门闸机制
+
+### Gate 1：项目级 `pipeline_validator.py`
+自动在 CI 或 pre-commit 中运行，扫描网页中的样式泄露：
+*   **阻断**：`layout.css` 中任何硬编码的 hex、rgb、rgba、hsl 或内置颜色关键字。
+*   **阻断**：HTML 页面中任何包含颜色的行内 style 声明。
+*   **阻断**：组件 JS 包含行内样式声明。
+
+### Gate 2：技能级 `skill_integrity_auditor.py`
+用于审查 AI 编写的技能规范自身：
+*   **阻断**：任何带有绝对物理路径、本地绝对盘符的 markdown 链接或代码片段（保证全员环境通用性）。
+*   **阻断**：不含 trigger 触发条件、死链或描述不合规的技能。
